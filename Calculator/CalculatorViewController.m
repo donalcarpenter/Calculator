@@ -49,7 +49,16 @@
     }
 
 }
+- (IBAction)enterPressed {
+    self.userIsEnteringNumberRightNow = NO;
+    [self.brain pushNumberOntoStack:[self.display.text doubleValue]];
+}
+
+
 - (IBAction)operationPressed:(UIButton *)sender {
+    [self enterPressed];
+    double result = [self.brain performOperation: sender.currentTitle];
+    self.display.text = [NSString stringWithFormat:@"%f", result];
 }
 
 @end

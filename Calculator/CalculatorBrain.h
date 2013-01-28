@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface CalculatorBrain : NSObject
+
 - (void)pushNumberOntoStack: (double)number;
+
 - (double)popNumberOffOfStack;
+
+- (double) performOperation: (NSString *)operation;
+
 @end

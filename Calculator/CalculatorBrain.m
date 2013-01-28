@@ -28,10 +28,37 @@
 
 - (double)popNumberOffOfStack{
     NSNumber *popme = [self.stack lastObject];
-    if(!popme){
+    if(popme){
         [self.stack removeLastObject];
     }
     return [popme doubleValue];
 }
 
- @end
+- (double) performOperation:(NSString *)operation  {
+    double result = 0;
+    double lastOperand;
+    double penultimateOperand;
+    
+    if([operation isEqualToString:@"+"]){
+        lastOperand = [self popNumberOffOfStack];
+        penultimateOperand = [self popNumberOffOfStack];
+        return lastOperand + penultimateOperand;
+    }
+    
+    if([operation isEqualToString:@"-"]){
+        return [self popNumberOffOfStack] - [self popNumberOffOfStack];
+    }
+    
+    if([operation isEqualToString:@"*"]){
+        return [self popNumberOffOfStack] * [self popNumberOffOfStack];
+    }
+
+    if([operation isEqualToString:@"/"]){
+        return [self popNumberOffOfStack] / [self popNumberOffOfStack];
+    }
+    
+    return result;
+}
+
+
+@end
