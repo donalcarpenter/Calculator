@@ -61,4 +61,10 @@
     self.display.text = [NSString stringWithFormat:@"%f", result];
 }
 
+- (IBAction)clear {
+    [self.brain clear];
+    self.display.text = @"0";
+    self.userIsEnteringNumberRightNow = NO;
+}
+
 @end

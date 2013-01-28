@@ -7,6 +7,8 @@
 //
 
 #import "CalculatorBrain.h"
+#import <math.h>
+
 @interface CalculatorBrain()
 @property (nonatomic, strong, readonly) NSMutableArray *stack;
 @end
@@ -42,23 +44,54 @@
     if([operation isEqualToString:@"+"]){
         lastOperand = [self popNumberOffOfStack];
         penultimateOperand = [self popNumberOffOfStack];
-        return lastOperand + penultimateOperand;
+        result = lastOperand + penultimateOperand;
     }
     
     if([operation isEqualToString:@"-"]){
-        return [self popNumberOffOfStack] - [self popNumberOffOfStack];
+        lastOperand = [self popNumberOffOfStack];
+        penultimateOperand = [self popNumberOffOfStack];
+        result = penultimateOperand - lastOperand;
     }
     
     if([operation isEqualToString:@"*"]){
-        return [self popNumberOffOfStack] * [self popNumberOffOfStack];
+        lastOperand = [self popNumberOffOfStack];
+        penultimateOperand = [self popNumberOffOfStack];
+        result = lastOperand * penultimateOperand;
     }
 
     if([operation isEqualToString:@"/"]){
-        return [self popNumberOffOfStack] / [self popNumberOffOfStack];
+        lastOperand = [self popNumberOffOfStack];
+        penultimateOperand = [self popNumberOffOfStack];
+        result = penultimateOperand / lastOperand;
     }
+    
+    if([operation isEqualToString:@"sin"]){
+        lastOperand = [self popNumberOffOfStack];
+        result = sin(lastOperand);
+    }
+    
+    if([operation isEqualToString:@"cos"]){
+        lastOperand = [self popNumberOffOfStack];
+        result = cos(lastOperand);
+    }
+    
+    if([operation isEqualToString:@"sqrt"]){
+        lastOperand = [self popNumberOffOfStack];
+        result = sqrt(lastOperand);
+    }
+    
+    if([operation isEqualToString:@"pi"]){
+        result = M_PI;
+    }
+    
+    // don't forget to push the last result
+    [self pushNumberOntoStack:result];
     
     return result;
 }
 
+-(void) clear{
+    [self.stack removeAllObjects];
+}
 
 @end

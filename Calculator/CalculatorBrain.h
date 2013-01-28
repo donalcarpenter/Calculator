@@ -14,6 +14,7 @@
 
 - (double)popNumberOffOfStack;
 
-- (double) performOperation: (NSString *)operation;
+- (double)performOperation: (NSString *)operation;
 
+- (void)clear;
 @end
