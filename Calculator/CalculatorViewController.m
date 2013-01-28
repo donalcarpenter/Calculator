@@ -12,6 +12,9 @@
 @interface CalculatorViewController ()
 @property (nonatomic) bool userIsEnteringNumberRightNow;
 @property (nonatomic, strong, readonly) CalculatorBrain *brain;
+@property (nonatomic) double lastResult;
+
+- (void) appendCurrentOperationWithString:(NSString *) string;
 @end
 
 @implementation CalculatorViewController
@@ -19,6 +22,8 @@
 @synthesize userIsEnteringNumberRightNow = _userIsEnteringNumberRightNow;
 @synthesize display = _display;
 @synthesize brain = _brain;
+@synthesize currentOperation = _currentOperation;
+@synthesize lastResult = _lastResult;
 
 - (CalculatorBrain*) brain{
     if(!_brain){
@@ -46,24 +51,36 @@
     }else{
         self.display.text = numberPressed;
         self.userIsEnteringNumberRightNow  = YES;
+        if(self.lastResult != 0){
+            self.currentOperation.text = [NSString stringWithFormat:@"%g", self.lastResult];
+        }
     }
 
 }
+
+- (void) appendCurrentOperationWithString:(NSString *) string{
+    self.currentOperation.text = [self.currentOperation.text stringByAppendingFormat:@" %@", string];
+}
+
 - (IBAction)enterPressed {
     self.userIsEnteringNumberRightNow = NO;
     [self.brain pushNumberOntoStack:[self.display.text doubleValue]];
+    [self appendCurrentOperationWithString: self.display.text];
 }
 
 
 - (IBAction)operationPressed:(UIButton *)sender {
     [self enterPressed];
-    double result = [self.brain performOperation: sender.currentTitle];
-    self.display.text = [NSString stringWithFormat:@"%f", result];
+    [self appendCurrentOperationWithString: sender.currentTitle];
+    self.lastResult = [self.brain performOperation: sender.currentTitle];
+    self.display.text = [NSString stringWithFormat:@"%g", self.lastResult];
+    [self appendCurrentOperationWithString: self.display.text];
 }
 
 - (IBAction)clear {
     [self.brain clear];
     self.display.text = @"0";
+    self.currentOperation.text = @"";
     self.userIsEnteringNumberRightNow = NO;
 }
 
