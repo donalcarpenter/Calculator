@@ -7,23 +7,49 @@
 //
 
 #import "CalculatorViewController.h"
+#import "CalculatorBrain.h"
 
 @interface CalculatorViewController ()
-
+@property (nonatomic) bool userIsEnteringNumberRightNow;
+@property (nonatomic, strong, readonly) CalculatorBrain *brain;
 @end
 
 @implementation CalculatorViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+@synthesize userIsEnteringNumberRightNow = _userIsEnteringNumberRightNow;
+@synthesize display = _display;
+@synthesize brain = _brain;
+
+- (CalculatorBrain*) brain{
+    if(!_brain){
+        _brain = [[CalculatorBrain alloc] init];
+    }
+    return _brain;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+- (IBAction)digitPressed:(UIButton *)sender {
+    
+    NSString *numberPressed = sender.currentTitle;
+    
+    NSLog(@"Number pressed %@", numberPressed);
+    
+    if([@"." isEqualToString:numberPressed]){
+        NSRange range = [self.display.text rangeOfString:@"."];
+        if(range.location != NSNotFound){
+            return;
+        }
+    }
+    
+    if(self.userIsEnteringNumberRightNow){
+        self.display.text = [self.display.text stringByAppendingString:numberPressed];
+    }else{
+        self.display.text = numberPressed;
+        self.userIsEnteringNumberRightNow  = YES;
+    }
+
+}
+- (IBAction)operationPressed:(UIButton *)sender {
 }
 
 @end
