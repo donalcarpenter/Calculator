@@ -14,11 +14,19 @@
 
 + (double) runProgram: (id)program;
 
++ (double) runProgram: (id)program
+  usingVariableValues:(NSDictionary *) variableValues;
+
 + (NSString *) descriptionOfProgram: (id) program;
 
 - (void)pushNumberOntoStack: (double)number;
 
+- (void)pushVariableOntoStack: (NSString *)variableName;
+
 - (double)performOperation: (NSString *)operation;
+
+- (double)performOperation: (NSString *)operation
+       usingVariableValues: (NSDictionary *) variableValues;
 
 - (void)clear;
 @end
