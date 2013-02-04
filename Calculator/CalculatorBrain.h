@@ -10,9 +10,13 @@
 
 @interface CalculatorBrain : NSObject
 
-- (void)pushNumberOntoStack: (double)number;
+@property (nonatomic, readonly) id program;
 
-- (double)popNumberOffOfStack;
++ (double) runProgram: (id)program;
+
++ (NSString *) descriptionOfProgram: (id) program;
+
+- (void)pushNumberOntoStack: (double)number;
 
 - (double)performOperation: (NSString *)operation;
 

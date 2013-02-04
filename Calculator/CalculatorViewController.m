@@ -63,6 +63,10 @@
 }
 
 - (IBAction)enterPressed {
+    if(!self.userIsEnteringNumberRightNow){
+        return;
+    }
+    
     self.userIsEnteringNumberRightNow = NO;
     [self.brain pushNumberOntoStack:[self.display.text doubleValue]];
     [self appendCurrentOperationWithString: self.display.text];

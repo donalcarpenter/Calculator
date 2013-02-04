@@ -16,6 +16,94 @@
 
 @synthesize stack = _stack;
 
+- (id) program{
+    return [self.stack copy];
+}
+
++ (NSString *) descriptionOfProgram:(id)program{
+    return @"dunno how to implement this yet";
+}
+
++ (double)runProgram:(id)program
+{
+    NSMutableArray *tmpstack;
+    if ([program isKindOfClass:[NSArray class]]) {
+        tmpstack = [program mutableCopy];
+    }
+    return [self popOperandOffProgramStack:tmpstack];
+}
+
++ (double)popOperandOffProgramStack:(NSMutableArray *)stack
+{
+    double result = 0;
+    
+    id topOfStack = [stack lastObject];
+    if (topOfStack) [stack removeLastObject];
+    
+    if ([topOfStack isKindOfClass:[NSNumber class]])
+    {
+        result = [topOfStack doubleValue];
+    }
+    else if ([topOfStack isKindOfClass:[NSString class]])
+    {
+        NSString *operation = (NSString *)topOfStack;
+        
+        double result = 0;
+        double lastOperand;
+        double penultimateOperand;
+        
+        if([operation isEqualToString:@"+"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            penultimateOperand = [self popOperandOffProgramStack:stack];
+            result = lastOperand + penultimateOperand;
+        }
+        
+        else if([operation isEqualToString:@"-"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            penultimateOperand = [self popOperandOffProgramStack:stack];
+            result = penultimateOperand - lastOperand;
+        }
+        
+        else if([operation isEqualToString:@"*"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            penultimateOperand = [self popOperandOffProgramStack:stack];
+            result = lastOperand * penultimateOperand;
+        }
+        
+        else if([operation isEqualToString:@"/"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            penultimateOperand = [self popOperandOffProgramStack:stack];
+            result = penultimateOperand / lastOperand;
+        }
+        
+        else if([operation isEqualToString:@"sin"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            result = sin(lastOperand);
+        }
+        
+        else if([operation isEqualToString:@"cos"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            result = cos(lastOperand);
+        }
+        
+        else if([operation isEqualToString:@"sqrt"]){
+            lastOperand = [self popOperandOffProgramStack:stack];
+            result = sqrt(lastOperand);
+        }
+        
+        else if([operation isEqualToString:@"pi"]){
+            result = M_PI;
+        }
+        
+        // don't forget to push the last result
+        // [self pushNumberOntoStack:result];
+        
+        return result;
+    }
+    
+    return result;
+}
+
 -(NSMutableArray *) stack{
     if(!_stack){
         _stack = [[NSMutableArray alloc] init];
@@ -37,57 +125,8 @@
 }
 
 - (double) performOperation:(NSString *)operation  {
-    double result = 0;
-    double lastOperand;
-    double penultimateOperand;
-    
-    if([operation isEqualToString:@"+"]){
-        lastOperand = [self popNumberOffOfStack];
-        penultimateOperand = [self popNumberOffOfStack];
-        result = lastOperand + penultimateOperand;
-    }
-    
-    if([operation isEqualToString:@"-"]){
-        lastOperand = [self popNumberOffOfStack];
-        penultimateOperand = [self popNumberOffOfStack];
-        result = penultimateOperand - lastOperand;
-    }
-    
-    if([operation isEqualToString:@"*"]){
-        lastOperand = [self popNumberOffOfStack];
-        penultimateOperand = [self popNumberOffOfStack];
-        result = lastOperand * penultimateOperand;
-    }
-
-    if([operation isEqualToString:@"/"]){
-        lastOperand = [self popNumberOffOfStack];
-        penultimateOperand = [self popNumberOffOfStack];
-        result = penultimateOperand / lastOperand;
-    }
-    
-    if([operation isEqualToString:@"sin"]){
-        lastOperand = [self popNumberOffOfStack];
-        result = sin(lastOperand);
-    }
-    
-    if([operation isEqualToString:@"cos"]){
-        lastOperand = [self popNumberOffOfStack];
-        result = cos(lastOperand);
-    }
-    
-    if([operation isEqualToString:@"sqrt"]){
-        lastOperand = [self popNumberOffOfStack];
-        result = sqrt(lastOperand);
-    }
-    
-    if([operation isEqualToString:@"pi"]){
-        result = M_PI;
-    }
-    
-    // don't forget to push the last result
-    [self pushNumberOntoStack:result];
-    
-    return result;
+    [self.stack addObject:operation];
+    return [[self class] runProgram:self.program];
 }
 
 -(void) clear{
