@@ -13,6 +13,7 @@
 @property (nonatomic, strong, readonly) NSMutableArray *stack;
 
 +(NSSet *)supportedOperations;
+
 @end
 @implementation CalculatorBrain
 
@@ -36,7 +37,6 @@
     }
     return _stack;
 }
-
 
 + (NSString *) descriptionOfProgram:(id)program{
     return @"dunno how to implement this yet";
@@ -174,6 +174,49 @@
 
 -(void) clear{
     [self.stack removeAllObjects];
+}
+
++ (NSSet *) variablesUsedInProgram:(id)program{
+
+    BOOL variablesFound = NO;
+    
+    if(![program isKindOfClass:[NSArray class]]){
+        return nil;
+    }
+    
+    NSMutableSet *listOfVariableNames = [[NSMutableSet alloc] init];
+    
+    NSArray *stack = (NSArray*)program;
+    
+    for (id operand in stack) {
+        // if the operand is not a string then move
+        // to next operand on the stack
+        if(![operand isKindOfClass:[NSString class]]){
+            continue;
+        }
+        
+        NSString* variableOrOperation = (NSString*)operand;
+        
+        // check the supported operations
+        if([[self supportedOperations] containsObject:variableOrOperation]){
+            continue;
+        }
+        
+        variablesFound = YES;
+        
+        if(![listOfVariableNames containsObject:variableOrOperation]){
+            // add to the list of known variable names
+            [listOfVariableNames addObject:variableOrOperation];
+        }
+    }
+    
+    
+    if(variablesFound){
+        return [listOfVariableNames copy];
+    }
+
+    
+    return nil;
 }
 
 @end

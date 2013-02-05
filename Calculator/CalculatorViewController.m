@@ -24,6 +24,7 @@
 
 @synthesize userIsEnteringNumberRightNow = _userIsEnteringNumberRightNow;
 @synthesize display = _display;
+@synthesize variablesUsed = _variablesUsed;
 @synthesize brain = _brain;
 @synthesize currentOperation = _currentOperation;
 @synthesize lastResult = _lastResult;
@@ -109,6 +110,7 @@
     self.display.text = @"0";
     self.currentOperation.text = @"";
     self.userIsEnteringNumberRightNow = NO;
+    self.variablesUsed.text = @"";
 }
 
 - (IBAction)variablePressed:(UIButton *)sender {
@@ -123,6 +125,20 @@
     self.display.text = operandPressed;
     
     [self appendCurrentOperationWithString: operandPressed];
+    
+    
+    NSSet* usedVariables = [[self.brain class] variablesUsedInProgram:self.brain.program];
+    self.variablesUsed.text = @"";
+    
+    for(NSString* var in usedVariables){
+        if(self.variablesUsed.text.length!=0){
+            self.variablesUsed.text = [self.variablesUsed.text stringByAppendingString:@", "];
+        }
+        
+        self.variablesUsed.text = [self.variablesUsed.text stringByAppendingString:var];
+        
+    }
+    
 }
 
 @end

@@ -12,8 +12,9 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *display;
 @property (weak, nonatomic) IBOutlet UILabel *currentOperation;
-
+@property (weak, nonatomic) IBOutlet UILabel *variablesUsed;
 
 - (IBAction)digitPressed:(UIButton *)sender;
+
 
 @end
