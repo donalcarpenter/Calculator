@@ -16,7 +16,7 @@
 @property (nonatomic) double lastResult;
 @property (nonatomic, weak, readonly) NSDictionary *variableValueCollection;
 
-- (void) appendCurrentOperationWithString:(NSString *) string;
+- (void) appendCurrentOperationWithString;
 
 @end
 
@@ -80,8 +80,10 @@
 
 }
 
-- (void) appendCurrentOperationWithString:(NSString *) string{
-    self.currentOperation.text = [self.currentOperation.text stringByAppendingFormat:@" %@", string];
+- (void) appendCurrentOperationWithString{
+    id program = self.brain.program;
+
+    self.currentOperation.text = [[self.brain class] descriptionOfProgram:program];
 }
 
 - (IBAction)enterPressed {
@@ -91,18 +93,24 @@
     
     self.userIsEnteringNumberRightNow = NO;
     [self.brain pushNumberOntoStack:[self.display.text doubleValue]];
-    [self appendCurrentOperationWithString: self.display.text];
+    [self appendCurrentOperationWithString];
 }
 
 
 - (IBAction)operationPressed:(UIButton *)sender {
     [self enterPressed];
-    [self appendCurrentOperationWithString: sender.currentTitle];
     
     self.lastResult = [self.brain performOperation: sender.currentTitle
-                               usingVariableValues: self.variableValueCollection];    
+                               usingVariableValues: self.variableValueCollection];
+
+    
+    id program = self.brain.program;
+    
+    // get the description of the program
+    self.display.text = [[self.brain class] descriptionOfProgram:program];
+    
     self.display.text = [NSString stringWithFormat:@"%g", self.lastResult];
-    [self appendCurrentOperationWithString: self.display.text];
+    [self appendCurrentOperationWithString];
 }
 
 - (IBAction)clear {
@@ -124,7 +132,7 @@
     
     self.display.text = operandPressed;
     
-    [self appendCurrentOperationWithString: operandPressed];
+    [self appendCurrentOperationWithString];
     
     
     NSSet* usedVariables = [[self.brain class] variablesUsedInProgram:self.brain.program];

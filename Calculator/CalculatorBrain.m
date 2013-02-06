@@ -11,6 +11,7 @@
 
 @interface CalculatorBrain()
 @property (nonatomic, strong, readonly) NSMutableArray *stack;
++ (NSString *) popDescriptionOfTopOfStack: (NSMutableArray *) stack;
 
 +(NSSet *)supportedOperations;
 
@@ -26,7 +27,7 @@
 +(NSSet *) supportedOperations{
     static NSSet* _supportedOps;
     if(!_supportedOps){
-        _supportedOps = [[NSSet alloc] initWithObjects:@"*", @"+", @"-", @"/", @"sqrt", @"pi", nil];
+        _supportedOps = [[NSSet alloc] initWithObjects:@"*", @"+", @"-", @"/", @"sqrt", @"pi", @"cos", @"sin", nil];
     }
     return _supportedOps;
 }
@@ -38,8 +39,80 @@
     return _stack;
 }
 
++ (NSString *) popDescriptionOfTopOfStack: (NSMutableArray *) stack{
+    
+    id topOfStack = [stack lastObject];
+    if(topOfStack) [stack removeLastObject];
+    
+    
+    
+    if([topOfStack isKindOfClass:[NSNumber class]]){
+        NSNumber* topOfStackAsNumber = (NSNumber*) topOfStack;
+        return [topOfStackAsNumber stringValue];
+    }
+    
+    NSString *stringFromStack = (NSString*)topOfStack;
+    
+    
+    if(![[self supportedOperations] containsObject:stringFromStack]){
+        // this must be a variable, so just return
+        return stringFromStack;
+    }
+    
+    NSString *penultimateString;
+    NSString *lastString;
+    
+    // ok, so now we know this is an operation
+    if([stringFromStack isEqualToString:@"+"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        penultimateString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"(%@ + %@)", penultimateString, lastString];
+    }
+    else if([stringFromStack isEqualToString:@"-"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        penultimateString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"(%@ - %@)", penultimateString, lastString];
+    }
+    else if([stringFromStack isEqualToString:@"/"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        penultimateString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"(%@ / %@)", penultimateString, lastString];
+    }
+    else if([stringFromStack isEqualToString:@"*"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        penultimateString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"(%@ * %@)", penultimateString, lastString];
+    }
+    else if([stringFromStack isEqualToString:@"sin"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"sin(%@)", lastString];
+    }
+    else if([stringFromStack isEqualToString:@"cos"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"cos(%@)", lastString];
+    }
+    else if([stringFromStack isEqualToString:@"sqrt"]){
+        lastString = [self popDescriptionOfTopOfStack:stack];
+        
+        return [NSString stringWithFormat:@"sqrt(%@)", lastString];
+    }
+    else if([stringFromStack isEqualToString:@"pi"]){
+        return @"pi";
+    }
+    
+    return @"";
+    
+}
+
+
 + (NSString *) descriptionOfProgram:(id)program{
-    return @"dunno how to implement this yet";
+    return [CalculatorBrain popDescriptionOfTopOfStack:[program mutableCopy]];
 }
 
 + (double)runProgram:(id)program
