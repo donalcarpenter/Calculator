@@ -121,6 +121,14 @@
     self.variablesUsed.text = @"";
 }
 
+- (IBAction)showGraph:(id)sender {
+    [self performSegueWithIdentifier:@"pushGraph" sender:self];
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
+}
+
 - (IBAction)variablePressed:(UIButton *)sender {
     NSString *operandPressed = sender.currentTitle;
     
