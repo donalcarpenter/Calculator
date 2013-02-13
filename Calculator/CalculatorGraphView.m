@@ -43,15 +43,25 @@
     // loop through x axis and get y double value
     // then plot to CGPoint
     int startingPoint = self.bounds.origin.x;
-    int endPoint = self.bounds.origin.y + self.bounds.size.height;
+    int endPoint = self.bounds.origin.y + self.bounds.size.width;
     
     CGContextMoveToPoint(context, startingPoint, 0);
     
+    // get the offset needed for y coords
+    int yAxisCoefficient = (self.bounds.size.height - self.bounds.origin.y) / 2;
+    int xAxisCoefficient = (endPoint - startingPoint) / 2;
+    
+    
+    // loop through and work out where to plot everything
     for (int i = startingPoint; i < endPoint; i+=1) {
-        double x = i - ((endPoint - startingPoint) / 2);
+        
+        double x = i - xAxisCoefficient;
         double y = [self.dataSource yForX:x];
         
-        CGContextAddLineToPoint(context, x, y);
+        // now we need to use the same idea to map y to a point
+        float yAxisPoint = yAxisCoefficient - y;
+        
+        CGContextAddLineToPoint(context, i, yAxisPoint);
     }
     
     CGContextStrokePath(context);
