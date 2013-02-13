@@ -10,6 +10,8 @@
 
 @implementation CalculatorGraphView
 
+@synthesize dataSource = _dataSource;
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -24,8 +26,35 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGPoint point = CGPointMake(0, 0);
+    
+    int x = self.bounds.origin.x + (self.bounds.size.width / 2);
+    int y = self.bounds.origin.y + (self.bounds.size.height / 2);
+    
+    CGPoint point = CGPointMake(x, y);
+    
     [AxesDrawer drawAxesInRect:rect originAtPoint:point scale:DEFAULT_SCALE];
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    // Set the line width and colour of the graph lines
+    CGContextSetLineWidth(context, 1.0);
+    CGContextSetStrokeColorWithColor(context, [[UIColor brownColor] CGColor]);
+    
+    // loop through x axis and get y double value
+    // then plot to CGPoint
+    int startingPoint = self.bounds.origin.x;
+    int endPoint = self.bounds.origin.y + self.bounds.size.height;
+    
+    CGContextMoveToPoint(context, startingPoint, 0);
+    
+    for (int i = startingPoint; i < endPoint; i+=1) {
+        double x = i - ((endPoint - startingPoint) / 2);
+        double y = [self.dataSource yForX:x];
+        
+        CGContextAddLineToPoint(context, x, y);
+    }
+    
+    CGContextStrokePath(context);
 }
 
 

@@ -427,6 +427,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Graph" id="cln-FG-ZFW"/>
+                    <connections>
+                        <outlet property="graphView" destination="uRl-ju-GgK" id="1Vi-xR-5eI"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OFa-HC-v5U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

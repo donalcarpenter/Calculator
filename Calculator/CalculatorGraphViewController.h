@@ -7,8 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CalculatorGraphView.h"
 
-@interface CalculatorGraphViewController : UIViewController
+@interface CalculatorGraphViewController: UIViewController <CalculatorGraphViewDataSource>
 
+@property (strong) NSArray* program;
+
+@property (strong, nonatomic) IBOutlet CalculatorGraphView *graphView;
 
 @end

@@ -9,6 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "AxesDrawer.h"
 
+@protocol CalculatorGraphViewDataSource <NSObject>
+
+- (double) yForX:(double) x;
+
+@end
+
 @interface CalculatorGraphView : UIView
+
+@property (weak) id<CalculatorGraphViewDataSource> dataSource;
 
 @end

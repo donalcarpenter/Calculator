@@ -8,6 +8,7 @@
 
 #import "CalculatorViewController.h"
 #import "CalculatorBrain.h"
+#import "CalculatorGraphViewController.h"
 
 @interface CalculatorViewController ()
 
@@ -87,7 +88,8 @@
 }
 
 - (IBAction)enterPressed {
-    if(!self.userIsEnteringNumberRightNow){
+    if(!self.userIsEnteringNumberRightNow)
+    {
         return;
     }
     
@@ -126,7 +128,12 @@
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
+    if([segue.identifier isEqualToString:@"pushGraph"])
+    {
+        CalculatorGraphViewController *graphVC = (CalculatorGraphViewController*)segue.destinationViewController;
+        
+        graphVC.program = self.brain.program;
+    }
 }
 
 - (IBAction)variablePressed:(UIButton *)sender {
