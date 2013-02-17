@@ -17,6 +17,10 @@
 
 @interface CalculatorGraphView : UIView
 
+@property int scale;
+
+-(void) moveOrigin: (UIPanGestureRecognizer*) sender;
+
 @property (weak) id<CalculatorGraphViewDataSource> dataSource;
 
 @end

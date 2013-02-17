@@ -8,31 +8,141 @@
 
 #import "CalculatorGraphView.h"
 
+@interface CalculatorGraphView()
+-(void) setup;
+@property CGPoint origin;
+@property CGFloat zoomFactor;
+@end
+
 @implementation CalculatorGraphView
 
+#define DEFAULT_SCALE 1.0
+
+BOOL _originSet = NO;
+BOOL _zoomSet = NO;
+
+@synthesize origin = _origin;
 @synthesize dataSource = _dataSource;
+@synthesize zoomFactor = _zoomFactor;
+
+
+-(CGPoint) origin{
+
+    // if the origin has not been explicitly set
+    // then use the centre of the bounds
+    if(!_originSet){
+        int x = self.bounds.origin.x + (self.bounds.size.width / 2);
+        int y = self.bounds.origin.y + (self.bounds.size.height / 2);
+        
+        return CGPointMake(x, y);
+    }
+    
+    return _origin;
+}
+
+-(void) setOrigin:(CGPoint) origin{
+    
+    _originSet = YES;
+    _origin = origin;
+    
+    // if the origin changed then we need to
+    // tell ios to redraw
+    [self setNeedsDisplay];
+    
+}
+
+-(CGFloat) zoomFactor{
+    if(!_zoomSet){
+        return 1.0;
+    }
+    
+    return _zoomFactor;
+}
+
+-(void) setZoomFactor:(CGFloat)zoomFactor{
+    _zoomFactor = zoomFactor;
+    _zoomSet = YES;
+    
+    [self setNeedsDisplay];
+}
+
+-(void) setup{
+    
+    // not sure if we need to add some check to see if this
+    // has alreay run
+    
+    // add gesture recognizers
+    [self addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveOrigin:)]];
+    
+    UITapGestureRecognizer* tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(setOriginWith:)];
+    tapper.numberOfTapsRequired = 3;
+    
+    [self addGestureRecognizer:[[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(zoomWith:)]];
+    
+    [self addGestureRecognizer:tapper];
+    
+    _zoomSet = NO;
+    _originSet = NO;
+}
+
+-(void) awakeFromNib{
+    [self setup];
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
+        [self setup];
     }
     return self;
 }
 
+-(void) zoomWith: (UIPinchGestureRecognizer *) sender{
+    if(sender.state != UIGestureRecognizerStateChanged && sender.state != UIGestureRecognizerStateEnded){
+        return;
+    }
+    
+    NSLog(@"zoom scale %g", sender.scale);
+    self.zoomFactor *= sender.scale;
+    [sender setScale:1.0];
+}
 
-#define DEFAULT_SCALE 1.0
+- (void) setOriginWith:(UITapGestureRecognizer *) sender
+{
+    if(sender.state != UIGestureRecognizerStateEnded)
+    {
+        return;
+    }
+    
+    self.origin = [sender locationInView:self];
+    
+}
+
+- (void) moveOrigin:(UIPanGestureRecognizer *)sender{
+    
+    if(sender.state != UIGestureRecognizerStateChanged && sender.state != UIGestureRecognizerStateEnded){
+        return;
+    }
+    
+    CGPoint pan = [sender translationInView:self];
+    CGPoint newOrigin;
+
+    // move the origin of the graph
+    newOrigin.x = self.origin.x + pan.x;
+    newOrigin.y = self.origin.y + pan.y;
+    
+    self.origin = newOrigin;
+    
+    [sender setTranslation:CGPointZero inView:self];
+}
 
 - (void)drawRect:(CGRect)rect
 {
     
-    int x = self.bounds.origin.x + (self.bounds.size.width / 2);
-    int y = self.bounds.origin.y + (self.bounds.size.height / 2);
+    CGFloat zoom = DEFAULT_SCALE * self.zoomFactor;
     
-    CGPoint point = CGPointMake(x, y);
-    
-    [AxesDrawer drawAxesInRect:rect originAtPoint:point scale:DEFAULT_SCALE];
+    [AxesDrawer drawAxesInRect:rect originAtPoint:self.origin scale:zoom];
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
@@ -43,23 +153,22 @@
     // loop through x axis and get y double value
     // then plot to CGPoint
     int startingPoint = self.bounds.origin.x;
-    int endPoint = self.bounds.origin.y + self.bounds.size.width;
+    int endPoint = self.bounds.origin.x + self.bounds.size.width;
     
     CGContextMoveToPoint(context, startingPoint, 0);
     
     // get the offset needed for y coords
-    int yAxisCoefficient = (self.bounds.size.height - self.bounds.origin.y) / 2;
-    int xAxisCoefficient = (endPoint - startingPoint) / 2;
-    
+    int yAxisCoefficient = self.origin.y;
+    int xAxisCoefficient = self.origin.x;
     
     // loop through and work out where to plot everything
-    for (int i = startingPoint; i < endPoint; i+=1) {
+    for (int i = startingPoint; i < endPoint; i++) {
         
-        double x = i - xAxisCoefficient;
+        double x = (i- xAxisCoefficient) / zoom;
         double y = [self.dataSource yForX:x];
         
-        // now we need to use the same idea to map y to a point
-        float yAxisPoint = yAxisCoefficient - y;
+        // now we need to use the inverse idea to map y to a point
+        float yAxisPoint = (yAxisCoefficient - y  * zoom);
         
         CGContextAddLineToPoint(context, i, yAxisPoint);
     }
