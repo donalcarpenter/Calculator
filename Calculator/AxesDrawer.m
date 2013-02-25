@@ -87,6 +87,11 @@
 	int started = NO;
 	int stillGoing = YES;
 
+    CGFloat top = bounds.origin.y;
+    CGFloat bottom = bounds.origin.y + bounds.size.height;
+    CGFloat left = bounds.origin.x;
+    CGFloat right = bounds.origin.x + bounds.size.width;
+    
 	for (int offset = unitsPerHashmark; !started || stillGoing; offset += unitsPerHashmark)
 	{
 		BOOL drew = NO;
@@ -95,38 +100,52 @@
 		hashMarkPoint.x = axisOrigin.x+scaledOffset;
 		hashMarkPoint.y = axisOrigin.y;
 		if (CGRectContainsPoint(bounds, hashMarkPoint)) {
-			CGContextMoveToPoint(context, hashMarkPoint.x, hashMarkPoint.y-HASH_MARK_SIZE);
-			CGContextAddLineToPoint(context, hashMarkPoint.x, hashMarkPoint.y+HASH_MARK_SIZE);
 			[self drawString:[NSString stringWithFormat:@"%d", offset] atPoint:hashMarkPoint withAnchor:ANCHOR_TOP];
 			drew = YES;
 		}
+        [self drawTinyHashMarkStartAt:CGPointMake(hashMarkPoint.x, top) drawTo:CGPointMake(hashMarkPoint.x, bottom)];
+        
+        
 		hashMarkPoint.x = axisOrigin.x-scaledOffset;
 		if (CGRectContainsPoint(bounds, hashMarkPoint)) {
-			CGContextMoveToPoint(context, hashMarkPoint.x, hashMarkPoint.y-HASH_MARK_SIZE);
-			CGContextAddLineToPoint(context, hashMarkPoint.x, hashMarkPoint.y+HASH_MARK_SIZE);
 			[self drawString:[NSString stringWithFormat:@"%d", -offset] atPoint:hashMarkPoint withAnchor:ANCHOR_TOP];
 			drew = YES;
 		}
+        [self drawTinyHashMarkStartAt:CGPointMake(hashMarkPoint.x, top) drawTo:CGPointMake(hashMarkPoint.x, bottom)];
+        
 		hashMarkPoint.x = axisOrigin.x;
 		hashMarkPoint.y = axisOrigin.y-scaledOffset;
 		if (CGRectContainsPoint(bounds, hashMarkPoint)) {
-			CGContextMoveToPoint(context, hashMarkPoint.x-HASH_MARK_SIZE, hashMarkPoint.y);
-			CGContextAddLineToPoint(context, hashMarkPoint.x+HASH_MARK_SIZE, hashMarkPoint.y);
 			[self drawString:[NSString stringWithFormat:@"%d", offset] atPoint:hashMarkPoint withAnchor:ANCHOR_LEFT];
 			drew = YES;
 		}
+        [self drawTinyHashMarkStartAt:CGPointMake(left, hashMarkPoint.y) drawTo:CGPointMake(right, hashMarkPoint.y)];
+        
+        
 		hashMarkPoint.y = axisOrigin.y+scaledOffset;
 		if (CGRectContainsPoint(bounds, hashMarkPoint)) {
-			CGContextMoveToPoint(context, hashMarkPoint.x-HASH_MARK_SIZE, hashMarkPoint.y);
-			CGContextAddLineToPoint(context, hashMarkPoint.x+HASH_MARK_SIZE, hashMarkPoint.y);
-			[self drawString:[NSString stringWithFormat:@"%d", -offset] atPoint:hashMarkPoint withAnchor:ANCHOR_LEFT];
+            [self drawString:[NSString stringWithFormat:@"%d", -offset] atPoint:hashMarkPoint withAnchor:ANCHOR_LEFT];
 			drew = YES;
 		}
+        [self drawTinyHashMarkStartAt:CGPointMake(left, hashMarkPoint.y) drawTo:CGPointMake(right, hashMarkPoint.y)];
+        
 		if (drew) started = YES;
 		stillGoing = drew;
 	}
 	
 	CGContextStrokePath(context);
+}
+
++ (void)drawTinyHashMarkStartAt:(CGPoint)fromPoint drawTo:(CGPoint)toPoint{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    UIGraphicsPushContext(context);
+    
+    CGContextSetStrokeColorWithColor(context, [[UIColor lightGrayColor] CGColor]);
+    
+    CGContextMoveToPoint(context, fromPoint.x, fromPoint.y);
+    CGContextAddLineToPoint(context, toPoint.x, toPoint.y);
+    
+    UIGraphicsPopContext();
 }
 
 + (void)drawAxesInRect:(CGRect)bounds originAtPoint:(CGPoint)axisOrigin scale:(CGFloat)pointsPerUnit

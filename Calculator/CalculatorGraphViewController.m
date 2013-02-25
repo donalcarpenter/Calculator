@@ -18,6 +18,20 @@
 @synthesize program = _program;
 @synthesize graphView = _graphView;
 
+-(NSArray *) program{
+    return _program;
+}
+
+-(void) setProgram:(NSArray *)program{
+    if(program == _program){
+        return;
+    }
+    
+    _program = nil;
+    _program = program;
+    [self.graphView setNeedsDisplay];
+}
+
 
 -(void) setGraphView:(CalculatorGraphView *)graphView{
     _graphView = graphView;

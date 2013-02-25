@@ -83,6 +83,7 @@ BOOL _zoomSet = NO;
     
     _zoomSet = NO;
     _originSet = NO;
+    
 }
 
 -(void) awakeFromNib{
@@ -137,8 +138,57 @@ BOOL _zoomSet = NO;
     [sender setTranslation:CGPointZero inView:self];
 }
 
+- (void) setAppropriateScaleAndOrigin{
+    
+    // we only want to run through this once
+    if(_zoomSet || _originSet){
+        return;
+    }
+    
+    // loop through x axis and get y double value
+    // then plot to CGPoint
+    int startingPoint = self.bounds.origin.x;
+    int endPoint = self.bounds.origin.x + self.bounds.size.width;
+    
+    // get the offset needed for y coords
+    int yAxisCoefficient = self.origin.y;
+    int xAxisCoefficient = self.origin.x;
+    
+    
+    CGFloat minY = CGFLOAT_MAX, maxY = CGFLOAT_MIN;
+    
+    // loop through and work out where to plot everything
+    for (int i = startingPoint; i < endPoint; i++) {
+        
+        
+        double x = (i- xAxisCoefficient);
+        double y = [self.dataSource yForX:x];
+              
+        if(y < minY){
+            minY = y;
+        }
+        if(y > maxY){
+            maxY = y;
+        }
+    }
+    
+    // pad out the values a little
+    minY -= (minY * 0.1);
+    maxY += (maxY * 0.1);
+    
+    // reset the scale & origin
+    CGFloat totalRangeOfY = (maxY - minY) ;
+    self.zoomFactor = self.bounds.size.height / totalRangeOfY;
+    
+    CGFloat newYOrigin = yAxisCoefficient + (((maxY + minY) / 2) * self.zoomFactor);
+    self.origin = CGPointMake(self.origin.x, newYOrigin);
+    
+}
+
 - (void)drawRect:(CGRect)rect
 {
+    
+    [self setAppropriateScaleAndOrigin];
     
     CGFloat zoom = DEFAULT_SCALE * self.zoomFactor;
     
@@ -148,7 +198,7 @@ BOOL _zoomSet = NO;
     
     // Set the line width and colour of the graph lines
     CGContextSetLineWidth(context, 1.0);
-    CGContextSetStrokeColorWithColor(context, [[UIColor brownColor] CGColor]);
+    CGContextSetStrokeColorWithColor(context, [[UIColor blueColor] CGColor]);
     
     // loop through x axis and get y double value
     // then plot to CGPoint
@@ -160,7 +210,8 @@ BOOL _zoomSet = NO;
     // get the offset needed for y coords
     int yAxisCoefficient = self.origin.y;
     int xAxisCoefficient = self.origin.x;
-    
+
+
     // loop through and work out where to plot everything
     for (int i = startingPoint; i < endPoint; i++) {
         
@@ -168,11 +219,12 @@ BOOL _zoomSet = NO;
         double y = [self.dataSource yForX:x];
         
         // now we need to use the inverse idea to map y to a point
-        float yAxisPoint = (yAxisCoefficient - y  * zoom);
+        CGFloat yAxisPoint = (yAxisCoefficient - y  * zoom);
         
         CGContextAddLineToPoint(context, i, yAxisPoint);
+        
     }
-    
+
     CGContextStrokePath(context);
 }
 

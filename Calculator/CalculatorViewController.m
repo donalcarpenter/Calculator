@@ -124,7 +124,15 @@
 }
 
 - (IBAction)showGraph:(id)sender {
-    [self performSegueWithIdentifier:@"pushGraph" sender:self];
+    CalculatorGraphViewController* splitViewGraphView = [self splitViewCalculatorGraphViewController];
+    if(splitViewGraphView)
+    {
+        splitViewGraphView.program = self.brain.program;
+    }
+    else
+    {
+        [self performSegueWithIdentifier:@"pushGraph" sender:self];
+    }
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -162,6 +170,14 @@
         
     }
     
+}
+
+-(CalculatorGraphViewController *) splitViewCalculatorGraphViewController{
+    CalculatorGraphViewController* gvc = [self.splitViewController.viewControllers lastObject];
+    if(![gvc isKindOfClass:[CalculatorGraphViewController class]]) {
+        gvc = nil;
+    }
+    return gvc;
 }
 
 @end
