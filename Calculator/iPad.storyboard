@@ -4,23 +4,42 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
     </dependencies>
     <scenes>
-        <!--Calculator Graph View Controller-->
+        <!--Calculator Graph View Controller - Graph-->
         <scene sceneID="BET-2Y-lKX">
             <objects>
-                <viewController id="ez2-nX-DKu" customClass="CalculatorGraphViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="tRC-UQ-trL" customClass="CalculatorGraphView">
+                <viewController autoresizesArchivedViewToFullSize="NO" title="Graph" definesPresentationContext="YES" modalPresentationStyle="currentContext" id="ez2-nX-DKu" customClass="CalculatorGraphViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="FeY-hL-khf">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nwl-qe-Fh4">
+                                <items/>
+                            </toolbar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dKp-la-8sK" customClass="CalculatorGraphView">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Nwl-qe-Fh4" firstAttribute="leading" secondItem="FeY-hL-khf" secondAttribute="leading" type="default" id="02Q-Nj-sti"/>
+                            <constraint firstItem="dKp-la-8sK" firstAttribute="leading" secondItem="FeY-hL-khf" secondAttribute="leading" type="default" id="0oZ-IU-oaq"/>
+                            <constraint firstItem="dKp-la-8sK" firstAttribute="trailing" secondItem="FeY-hL-khf" secondAttribute="trailing" type="default" id="KTL-2M-OLf"/>
+                            <constraint firstItem="Nwl-qe-Fh4" firstAttribute="trailing" secondItem="FeY-hL-khf" secondAttribute="trailing" type="default" id="Ve2-KL-Foq"/>
+                            <constraint firstItem="Nwl-qe-Fh4" firstAttribute="top" secondItem="FeY-hL-khf" secondAttribute="top" type="default" id="aR0-Ht-jKB"/>
+                            <constraint firstItem="dKp-la-8sK" firstAttribute="bottom" secondItem="FeY-hL-khf" secondAttribute="bottom" type="default" id="jkG-xH-sWx"/>
+                            <constraint firstItem="dKp-la-8sK" firstAttribute="top" secondItem="Nwl-qe-Fh4" secondAttribute="bottom" type="default" id="nrY-cf-XfR"/>
+                        </constraints>
                     </view>
                     <toolbarItems/>
+                    <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="graphView" destination="tRC-UQ-trL" id="fxe-v2-Y5d"/>
+                        <outlet property="graphView" destination="dKp-la-8sK" id="vL7-Jw-vhM"/>
+                        <outlet property="toolbarButtons" destination="Nwl-qe-Fh4" id="goh-5k-RmP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xcp-Br-7O0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1383" y="-733"/>
+            <point key="canvasLocation" x="1451" y="-661"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="sfu-uM-AlY">
@@ -473,6 +492,7 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/CalculatorGraphViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="graphView" candidateClass="CalculatorGraphView"/>
+                <relationship kind="outlet" name="toolbarButtons" candidateClass="UIToolbar"/>
             </relationships>
         </class>
         <class className="CalculatorViewController" superclassName="UIViewController">

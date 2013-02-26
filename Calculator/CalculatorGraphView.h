@@ -12,6 +12,7 @@
 @protocol CalculatorGraphViewDataSource <NSObject>
 
 - (double) yForX:(double) x;
+@property (readonly) BOOL hasProgramBeenDefined;
 
 @end
 

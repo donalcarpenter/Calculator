@@ -141,10 +141,10 @@ BOOL _zoomSet = NO;
 - (void) setAppropriateScaleAndOrigin{
     
     // we only want to run through this once
-    if(_zoomSet || _originSet){
+    if(_zoomSet || _originSet || !self.dataSource.hasProgramBeenDefined){
         return;
     }
-    
+        
     // loop through x axis and get y double value
     // then plot to CGPoint
     int startingPoint = self.bounds.origin.x;
@@ -171,6 +171,7 @@ BOOL _zoomSet = NO;
             maxY = y;
         }
     }
+
     
     // pad out the values a little
     minY -= (minY * 0.1);
