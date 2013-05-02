@@ -212,7 +212,6 @@ BOOL _zoomSet = NO;
     int yAxisCoefficient = self.origin.y;
     int xAxisCoefficient = self.origin.x;
 
-
     // loop through and work out where to plot everything
     for (int i = startingPoint; i < endPoint; i++) {
         
